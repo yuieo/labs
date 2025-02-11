@@ -10,4 +10,4 @@
 
 Воспользовавшись библиотекой itertools нашел кол-во возможных кодов, которые может составить Тимофей.
 
-![image]()
+![image](https://github.com/user-attachments/assets/0c19bb8d-a128-447b-acbf-b4fc77b1e44c)
