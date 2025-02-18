@@ -62,7 +62,7 @@
 
 
 ## Задание 10
-**10_store** - копипаста
+**10_store** - вывести стоимость каждого вида товара на складе
 
 ![image](https://github.com/user-attachments/assets/f769c116-cdb1-4bf2-9a5d-13355240ae29)
 
