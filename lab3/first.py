@@ -33,7 +33,7 @@ test_cases = [
 ]
 
 for test in test_cases:
-    print(f"введите: {test}")
+    print(f"пример: {test}")
     print(f"без рекурсии: {count_iterative(test)}")
     print(f"с рекурсией: {count_recursive(test)}")
     print()
