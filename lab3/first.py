@@ -7,6 +7,7 @@ def count_iterative(lst):
         current = stack.pop()
         for item in current:
             if isinstance(item, list):
+                count += 1
                 stack.append(item)
             else:
                 count += 1
@@ -18,6 +19,7 @@ def count_recursive(lst):
     count = 0
     for item in lst:
         if isinstance(item, list):
+            count += 1
             count += count_recursive(item)
         else:
             count += 1
@@ -26,7 +28,7 @@ def count_recursive(lst):
 
 test_cases = [
     [],
-    [1, 2, 3],
+    [1, [2, 3]],
     ["x", "y", ["z"]],
     [1, 2, [3, 4, [5]]],
     [1, 2, 4, ["z", "x"]]
