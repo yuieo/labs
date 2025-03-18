@@ -97,3 +97,26 @@ git push origin имя_ветки
 # Пример команды Git для получения изменений из удаленного репозитория:
 git pull origin имя_ветки
 ```
+
+
+# Уровень Medium
+Обернул всё в функции и импорировал их в файл main.py
+
+``` python
+import c00_distance
+import c01_circle
+import c02_operations
+import c03_favorite_movies
+import c04_my_family
+import c05_zoo
+import c06_songs_list
+import c07_secret
+import c08_garden
+import c09_shopping
+import c10_storeS
+```
+
+вывод:
+
+![image](https://github.com/user-attachments/assets/4c5b1f5c-1b8f-47d6-a6aa-f5ca58fdbff8)
+
