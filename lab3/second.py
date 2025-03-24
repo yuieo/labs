@@ -1,4 +1,4 @@
-# c рекурсии
+# c рекурсией
 def recursive_xi(i):
     if i == 1:
         return 1
@@ -8,13 +8,13 @@ def recursive_xi(i):
     # x_i = ((i-1)*x_{i-1})/3 + ((i-2)*x_{i-2})/4
     return ((i - 1) * recursive_xi(i - 1)) / 3 + ((i - 2) * recursive_xi(i - 2)) / 4
 
-print("c рекурсии")
+print("c рекурсией")
 if __name__ == "__main__":
     for i in range(1, 6):
         print(f"x[{i}] = {round(recursive_xi(i), 6)}")
 
 
-# c рекурсии
+# без рекурсии
 def iterative_xi(i):
     if i < 1:
         raise ValueError("i должно быть положительным числом")
