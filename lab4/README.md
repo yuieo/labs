@@ -24,3 +24,7 @@
 
 ## Вывод
 ![image](https://github.com/user-attachments/assets/a9b1ffbd-6ead-4c6f-b9e7-f99871e7461c)
+
+## Список используемой информации
+1. [Декораторы в Python: понять и полюбить](https://tproger.ru/translations/demystifying-decorators-in-python)
+2. [Декораторы Python: пошаговое руководство](https://habr.com/ru/companies/otus/articles/727590/)
