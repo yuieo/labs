@@ -1,47 +1,37 @@
-def logger(func):
-    def wrapper(*args):
-        result = func(*args)
-        print(f"Текущий результат: {result}")
-        return result
-
-    return wrapper
-
+def repeat(times):
+    def decorator(func):
+        def wrapper(arg):
+            results = []
+            for _ in range(times):
+                result = func(arg)
+                results.append(result)
+            return results
+        return wrapper
+    return decorator
 
 def make_calc(operation, initial=0):
-    result = initial
-
-    @logger
-    def calculator(number):
-        nonlocal result
-
-
+    result = initial  # начальное значение сохраняется в замыкании
+    
+    def calculator(value):
+        nonlocal result  # позволяет менять значение из замыкания
+        
         if operation == "+":
-            result += number
+            result += value
         elif operation == "-":
-            result -= number
+            result -= value
         elif operation == "*":
-            result *= number
+            result *= value
         elif operation == "/":
-            result /= number
-
+            result /= value
+            
         return result
-
+    
     return calculator
 
-
-
 calc = make_calc("*", initial=1)
-print(calc(5))
+
+calc = repeat(3)(calc)
+
+# Тест
+print(calc(5)) 
 print(calc(2))
-
-calc = make_calc("*", initial=1)
-calc(5)
-calc(2)
-
-calc2 = make_calc("+", initial=0)
-calc2(3)
-calc2(4)
-
-calc3 = make_calc("-", initial=10)
-calc3(3)
-calc3(2)
