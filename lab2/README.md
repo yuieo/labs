@@ -35,3 +35,13 @@
 
 ![image](https://github.com/user-attachments/assets/f80c5ad5-6a73-4a0c-8587-b45b8663b918)
 
+
+
+# Medium
+Добавил доктесты для задач
+При неправильном ответе выводит ошибку
+![image](https://github.com/user-attachments/assets/5d2172c0-0a5e-4609-afea-47947cc61390)
+
+## Воспользовался этим источником информации 
+**[ПРОДВИНУТОЕ ТЕСТИРОВАНИЕ В PYTHON: КАК ПИСАТЬ ДОКТЕСТЫ](https://www.8host.com/blog/prodvinutoe-testirovanie-v-python-kak-pisat-doktesty/)**
+
