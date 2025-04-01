@@ -1,29 +1,72 @@
 #вариант 1
 
-print('задание 1')
-import itertools
-k = 0
-a = list(itertools.product('ТИМОФЕЙ', repeat=5))
-for x in a:
-    if x.count('Й') == 1 and x[0]!='Й' and x[4]!='Й' and x.count('ЙИ')==0 and x.count('ИЙ')==0:
-        k+=1
 
-print(k)
+def task1():
+    """
+    Тимофей составляет 5-буквенные коды из букв Т, И, М, О, Ф, Е, Й. 
+    Буква Й может использоваться в коде не более одного раза, при этом она не может стоять на первом месте, на последнем месте и рядом с буквой И. 
+    Все остальные буквы могут встречаться произвольное количество раз или не встречаться совсем.
+
+    Возвращает количество различных кодов, которые может составить Тимофе1й
+
+    Доктест
+    >>> task1()
+    3888
+    """
+    import itertools
+    k = 0
+    a = list(itertools.product('ТИМОФЕЙ', repeat=5))
+    for x in a:
+        if x.count('Й') == 1 and x[0]!='Й' and x[4]!='Й' and x.count('ЙИ')==0 and x.count('ИЙ')==0:
+            k+=1
+    return k
 
 
-print('\nзадание 2')
-result = 4**2020 + 2**2017 - 15
-bin_result = bin(result)
-print(bin_result.count('1'))
+def task2():
+    """
+    Вычислить количество единиц в двоичной записи значения выражения 4^2020 + 2^2017 - 15?
+
+    Доктест
+    >>> task2()
+    2015
+    """
+    result = 4**2020 + 2**2017 - 15
+    bin_result = bin(result)
+    return bin_result.count('1')
 
 
-print('\nзадание 3')
-for n in range(174457, 174505 + 1):
-    segment = []
-    for d in range(2, n//2 + 1):
-        if n % d == 0:
-            segment.append(d)
-            if len(segment) > 2:
-                break
-    if len(segment) == 2:
-        print(segment[0], segment[1])
+def task3():
+    """
+    Находит среди целых чисел, принадлежащих числовому отрезку [174457;174505], числа, имеющие ровно два различных натуральных делителя, не считая единицы и самого числа. 
+    Для каждого найденного числа выводит эти 2 делителя в порядке возрастания
+
+    Доктест
+    >>> task3()
+    3 58153
+    7 24923
+    59 2957
+    13 13421
+    149 1171
+    5 34897
+    211 827
+    2 87251
+    """
+    for n in range(174457, 174505 + 1):
+        segment = []
+        for d in range(2, n//2 + 1):
+            if n % d == 0:
+                segment.append(d)
+                if len(segment) > 2:
+                    break
+        if len(segment) == 2:
+            print(segment[0], segment[1])
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()
+    print('задание 1')
+    print(task1())
+    print('задание 2')
+    print(task2())
+    print('задание 3')
+    task3()
