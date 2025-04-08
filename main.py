@@ -19,11 +19,18 @@ def count_divisors(num):
                 count += 1
     return count
 
-min_val = 100
+def generate_numbers(min_val, max_val, count):
+    for _ in range(count):
+        yield simple_random(min_val, max_val)
+
+min_val = 1
 max_val = 500
 n = 4
+count = 10
 
-numbers = [simple_random(min_val, max_val) for _ in range(6)]
+numbers_generator = generate_numbers(min_val, max_val, count)
+numbers = list(numbers_generator)
+
 
 filtered_numbers = list(filter(lambda x: count_divisors(x) <= n, numbers))
 
