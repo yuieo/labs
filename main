@@ -1,0 +1,31 @@
+def count_divisors(num):
+    count = 0
+    for i in range(1, num + 1):
+        if num % i == 0:
+            count += 1
+    return count
+
+def number_generator(start, end):
+    current = start
+    while True:
+        yield current
+        current += 1
+        if current > end:
+            current = start
+
+start = 1
+end = 20
+max_divisors = 4
+how_many = 5
+
+gen = number_generator(start, end)
+filtered = filter(lambda x: count_divisors(x) <= max_divisors, gen)
+good_numbers = []
+
+for _ in range(how_many):
+    good_numbers.append(next(filtered))
+
+print(f"Числа от {start} до {end} с делителями не больше {max_divisors}:")
+print(good_numbers)
+for num in good_numbers:
+    print(f"{num} имеет {count_divisors(num)} делителей")
