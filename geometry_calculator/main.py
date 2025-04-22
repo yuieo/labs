@@ -10,16 +10,16 @@ class SimpleGeometryCalculator:
         self.root.title("фигурки")
         self.root.geometry("600x300")
 
-        # Кнопки выбора фигуры
+        #выбор фигур
         tk.Button(root, text="Прямоугольник", command=lambda: self.calculate_shape("Прямоугольник")).pack(pady=5)
         tk.Button(root, text="Треугольник", command=lambda: self.calculate_shape("Треугольник")).pack(pady=5)
         tk.Button(root, text="Трапеция", command=lambda: self.calculate_shape("Трапеция")).pack(pady=5)
 
-        # Поле для вывода результатов
+        #вывод результатов
         self.result_label = tk.Label(root, text="", justify="left")
         self.result_label.pack(pady=10)
 
-        # Кнопка сохранения
+        #сохранение
         tk.Button(root, text="Сохранить в DOCX", command=self.save_to_docx).pack(pady=5)
 
         self.last_result = ""
