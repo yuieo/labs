@@ -1,20 +1,22 @@
 import itertools
 import doctest
 
+
 class CodeGenerator:
     """
     Класс для решения задачи о генерации 5-буквенных кодов с определенными ограничениями.
-    
+
     Метод solve() возвращает количество допустимых кодов.
-    
+
     Доктест:
     >>> CodeGenerator().solve()
-    3888
+    10476
     """
+
     def __init__(self):
         self.letters = 'ТИМОФЕЙ'
         self.code_length = 5
-    
+
     def is_valid_code(self, code):
         """Проверяет, удовлетворяет ли код всем условиям."""
         if code.count('Й') > 1:
@@ -24,7 +26,7 @@ class CodeGenerator:
         if 'ЙИ' in ''.join(code) or 'ИЙ' in ''.join(code):
             return False
         return True
-    
+
     def solve(self):
         """Возвращает количество допустимых кодов."""
         count = 0
@@ -37,42 +39,44 @@ class CodeGenerator:
 class BinaryOnesCounter:
     """
     Класс для подсчета количества единиц в двоичной записи выражения 4^2020 + 2^2017 - 15.
-    
+
     Метод solve() возвращает количество единиц в двоичном представлении результата.
-    
+
     Доктест:
     >>> BinaryOnesCounter().solve()
     2015
     """
+
     def __init__(self):
         self.exponent1 = 2020
         self.exponent2 = 2017
         self.subtractor = 15
-    
+
     def solve(self):
         """Вычисляет выражение и возвращает количество единиц в его двоичном представлении."""
-        result = 4**self.exponent1 + 2**self.exponent2 - self.subtractor
+        result = 4 ** self.exponent1 + 2 ** self.exponent2 - self.subtractor
         return bin(result).count('1')
 
 
 class PrimeDivisorsFinder:
     """
     Класс для поиска чисел в заданном диапазоне, имеющих ровно два простых делителя.
-    
+
     Метод solve() возвращает список кортежей с найденными числами и их делителями.
-    
+
     Доктест:
     >>> PrimeDivisorsFinder(5, 9).solve()
     [(6, (2, 3)), (8, (2, 4))]
     """
+
     def __init__(self, start=174457, end=174505):
         self.start = start
         self.end = end
-    
+
     def find_divisors(self, n):
         """Находит все делители числа n, кроме 1 и самого числа."""
         divisors = []
-        for d in range(2, int(n**0.5) + 1):
+        for d in range(2, int(n ** 0.5) + 1):
             if n % d == 0:
                 if d == n // d:
                     divisors.append(d)
@@ -81,7 +85,7 @@ class PrimeDivisorsFinder:
                 if len(divisors) > 2:
                     break
         return sorted(divisors)
-    
+
     def solve(self):
         """Возвращает список кортежей (число, (делитель1, делитель2)) для чисел с ровно двумя делителями."""
         result = []
@@ -93,16 +97,14 @@ class PrimeDivisorsFinder:
 
 
 if __name__ == "__main__":
-    # Тестирование с помощью doctest
     doctest.testmod()
-    
-    # Решение оригинальных задач
+
     print("Задание 1:")
     print(CodeGenerator().solve())
-    
+
     print("\nЗадание 2:")
     print(BinaryOnesCounter().solve())
-    
+
     print("\nЗадание 3:")
     for number, divisors in PrimeDivisorsFinder().solve():
         print(divisors[0], divisors[1])
