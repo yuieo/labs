@@ -40,6 +40,62 @@ pip install tk python-docx
 ![изображение](https://github.com/user-attachments/assets/22c0adc3-58b8-4183-82da-6943bd88e096)
 
 
+
+
+
+# Medium 
+1. Устанавливаем Docker
+2. Создаем контейнер с именем my-postgres
+    Устанавливаем пароль mysecretpassword для пользователя postgres
+    Открываем порт 5432 для подключения
+    Используем последнюю версию PostgreSQL
+   
+``` docker
+docker run --name my-postgres -e POSTGRES_PASSWORD=mysecretpassword -p 5432:5432 -d postgres
+```
+
+3. Подключаем к контейнеру:
+
+   ``` docker
+   docker exec -it my-postgres psql -U postgres
+   ```
+
+4. В консоли PostgreSQL создаем базу данных и таблицу
+
+   ```
+   CREATE DATABASE geometry_db;
+   \c geometry_db
+
+   CREATE TABLE calculations (
+       id SERIAL PRIMARY KEY,
+       shape_type VARCHAR(50) NOT NULL,
+       area FLOAT NOT NULL,
+       circumradius VARCHAR(100) NOT NULL,
+       inradius VARCHAR(100) NOT NULL,
+       calculation_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+   );
+   ```
+
+5. Скачиваем необходимую библиотеку
+
+   ```
+   pip install psycopg2-binary
+   ```
+
+6. В main.py:
+   * Добавлен метод connect_db() для подключения к базе данных
+   * Используется библиотека psycopg2 для работы с PostgreSQL
+   * В методе calculate_shape() добавлен вызов save_to_db()
+   * Добавлена кнопка "Показать историю" для просмотра последних 10 записей
+   * Метод show_history() получает данные из БД и отображает их
+  
+## Работа программы
+
+![изображение](https://github.com/user-attachments/assets/9b82c3e8-31cf-4887-81ed-4aab396f9f0d)
+
+![изображение](https://github.com/user-attachments/assets/8aa4b586-f1d1-418b-a943-3c8d87b4a661)
+
+
 ## Список используемой информации
 1. [Руководство по Tkinter](https://metanit.com/python/tkinter/)
 2. [tkinter — Python interface to Tcl/Tk](https://docs.python.org/3/library/tkinter.html)
