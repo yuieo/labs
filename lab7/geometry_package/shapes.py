@@ -29,6 +29,26 @@ class Rectangle(Shape):
         self.a = a
         self.b = b
 
+    @property
+    def a(self):
+        return self._a
+    
+    @a.setter
+    def a(self, value):
+        if value <= 0:
+            raise ValueError("Длина стороны должна быть > 0")
+        self._a =  value
+
+    @property
+    def b(self):
+        return self._b
+    
+    @b.setter
+    def b(self, value):
+        if value <= 0:
+            raise ValueError
+        self._b =  value
+
     def area(self):
         return self.a * self.b
 
@@ -39,9 +59,11 @@ class Rectangle(Shape):
         if self.a == self.b:
             return self.a / 2
         return "Нет вписанной окружности"
-
-    def __eq__(self, other):
-        return self.a == other.a and self.b == other.b
+    
+    def __str__(self):
+        return f"Прямоугольник: a={self.a}, b={self.b}"
+    def __repr__(self):
+        return f"Rectangle(a={self.a}, b={self.b})"
 
 
 class Triangle(Shape):
@@ -59,14 +81,11 @@ class Triangle(Shape):
 
     def inradius(self):
         return self.area() / ((self.a + self.b + self.c) / 2)
+    def __str__(self):
+        return f"Треугольник: a={self.a}, b={self.b}, c={self.c}"
+    def __repr__(self):
+        return f"Triangle(a={self.a}, b={self.b}, c={self.c})"
 
-    def __eq__(self, other):
-        return (self.a == other.a and
-                self.b == other.b and
-                self.c == other.c)
-
-    def __lt__(self, other):
-        return self.area() < other.area()
 
 
 class Trapezoid(Shape):
@@ -88,12 +107,7 @@ class Trapezoid(Shape):
         if abs((self.a + self.b) - (self.c + self.d)) > 1e-6:
             return "Невозможно вписать окружность"
         return self.area() / ((self.a + self.b) / 2)
-
-    def __eq__(self, other):
-        return (self.a == other.a and
-                self.b == other.b and
-                self.c == other.c and
-                self.d == other.d)
-
-    def __bool__(self):
-        return self.area() > 0
+    def __str__(self):
+        return f"Трапеция: a={self.a}, b={self.b}, c={self.c}, d={self.d}"
+    def __repr__(self):
+        return f"Trapezoid(a={self.a}, b={self.b}, c={self.c}, d={self.d})"
