@@ -1,38 +1,56 @@
-import time
+from appJar import gui
+from geometry_package.shapes import Rectangle, Triangle, Trapezoid
+from docx import Document
 
-def simple_random(min_val, max_val):
-    seed = simple_random.seed
-    seed = (1664525 * seed + 1013904223) & 0xFFFFFFFF
-    simple_random.seed = seed
-    return min_val + (seed % (max_val - min_val + 1))
+class SimpleGeometryCalculator:
+    def __init__(self):
+        self.app = gui("Фигуры", "400x300")
+        self.app.addButton("Прямоугольник", lambda: self.calculate("Прямоугольник"))
+        self.app.addButton("Треугольник", lambda: self.calculate("Треугольник"))
+        self.app.addButton("Трапеция", lambda: self.calculate("Трапеция"))
+        self.app.addLabel("result", "", colspan=2)
+        self.app.addButton("Сохранить", self.save)
+        self.app.go()
 
-simple_random.seed = int(time.time())
+    def calculate(self, shape_type):
+        try:
+            if shape_type == "Прямоугольник":
+                a = float(self.app.stringBox("Ввод", "Сторона a:"))
+                b = float(self.app.stringBox("Ввод", "Сторона b:"))
+                shape = Rectangle(a, b)
+            elif shape_type == "Треугольник":
+                a = float(self.app.stringBox("Ввод", "Сторона a:"))
+                b = float(self.app.stringBox("Ввод", "Сторона b:"))
+                c = float(self.app.stringBox("Ввод", "Сторона c:"))
+                shape = Triangle(a, b, c)
+            elif shape_type == "Трапеция":
+                a = float(self.app.stringBox("Ввод", "Основание a:"))
+                b = float(self.app.stringBox("Ввод", "Основание b:"))
+                c = float(self.app.stringBox("Ввод", "Боковая сторона c:"))
+                d = float(self.app.stringBox("Ввод", "Боковая сторона d:"))
+                shape = Trapezoid(a, b, c, d)
 
-def count_divisors(num):
-    if num < 1:
-        return 0
-    count = 0
-    for i in range(1, int(num**0.5) + 1):
-        if num % i == 0:
-            count += 1
-            if i != num // i:
-                count += 1
-    return count
+            result_text = f"{shape}\nПлощадь: {shape.area():.2f}\n"
+            result_text += f"Радиус описанной окружности: {shape.circumradius():.2f}\n"
+            result_text += f"Радиус вписанной окружности: {shape.inradius():.2f}"
 
-def generate_numbers(min_val, max_val, count):
-    for _ in range(count):
-        yield simple_random(min_val, max_val)
+            self.app.setLabel("result", result_text)
+            self.last_result = result_text
 
-min_val = 1
-max_val = 500
-n = 4
-count = 10
+        except ValueError:
+            self.app.errorBox("Ошибка", "Некорректный ввод!")
+        except Exception as e:
+            self.app.errorBox("Ошибка", f"Ошибка: {str(e)}")
 
-numbers_generator = generate_numbers(min_val, max_val, count)
-numbers = list(numbers_generator)
+    def save(self):
+        if not hasattr(self, 'last_result'):
+            self.app.errorBox("Ошибка", "Нет данных для сохранения")
+            return
 
+        doc = Document()
+        doc.add_paragraph(self.last_result)
+        doc.save("result.docx")
+        self.app.infoBox("Успех", "Сохранено в result.docx")
 
-filtered_numbers = list(filter(lambda x: count_divisors(x) <= n, numbers))
-
-print("Сгенерированные числа:", numbers)
-print("После фильтрации:", filtered_numbers)
+if __name__ == "__main__":
+    SimpleGeometryCalculator()
