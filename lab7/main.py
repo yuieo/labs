@@ -38,8 +38,8 @@ class SimpleGeometryCalculator:
                 shape = Trapezoid(a, b, c, d)
 
             result_text = f"{shape}\nПлощадь: {shape.area():.2f}\n"
-            result_text += f"Радиус описанной окружности: {shape.circumradius()}\n"
-            result_text += f"Радиус вписанной окружности: {shape.inradius()}"
+            result_text += f"Радиус описанной окружности: {shape.circumradius():.2f}\n"
+            result_text += f"Радиус вписанной окружности: {shape.inradius():.2f}"
 
             self.result.config(text=result_text)
             self.last_result = result_text
@@ -64,4 +64,3 @@ if __name__ == "__main__":
     root = tk.Tk()
     app = SimpleGeometryCalculator(root)
     root.mainloop()
-  
