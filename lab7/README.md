@@ -43,6 +43,7 @@ area = shape.area()
 
 
 ## Список используемой информации
-1. [Как создать и использовать абстрактные базовые классы в Python](https://sky.pro/media/kak-sozdat-i-ispolzovat-abstraktnye-bazovye-klassy-v-python/)
-2. [Python-волшебство: как магические методы облегчают жизнь программиста](https://habr.com/ru/articles/788248/)
-3. Дискорд сервер - ithg_prog
+1. [appJar](http://appjar.info/)
+2. [Как создать и использовать абстрактные базовые классы в Python](https://sky.pro/media/kak-sozdat-i-ispolzovat-abstraktnye-bazovye-klassy-v-python/)
+3. [Python-волшебство: как магические методы облегчают жизнь программиста](https://habr.com/ru/articles/788248/)
+4. Дискорд сервер - ithg_prog
