@@ -35,7 +35,7 @@ area = shape.area()
 ```
 
 ## Работа программы
-![изображение](https://github.com/user-attachments/assets/950b644b-042d-45fa-8d88-c39e8b5d3976)
+![image](https://github.com/user-attachments/assets/7c9d5671-1427-4a04-aead-9831f19901ee)
 
 ![изображение](https://github.com/user-attachments/assets/9588e391-2940-42d1-b03b-79f0c1605e1e)
 
