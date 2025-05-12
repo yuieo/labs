@@ -25,6 +25,29 @@
 ## Вывод
 ![image](https://github.com/user-attachments/assets/a9b1ffbd-6ead-4c6f-b9e7-f99871e7461c)
 
+
+# MEDIUM
+## 1 задача
+1. Декоратор `logger` теперь:  
+   - Имеет опциональный параметр `verbose` (по умолчанию `True`).  
+   - Не обрабатывает рекурсивные вызовы.  
+2. Калькулятор работает так же, но можно отключить логирование:  
+   ```python
+   @logger(verbose=False)  # вывод не будет печататься
+   def calculator(number): ...
+
+
+## 2 задача
+1. Декоратор repeat стал гибким:
+    - Работает с параметрами (`@repeat(times=3)`) и без них (`@repeat`).
+    - По умолчанию `times=1` (если не указано).
+
+2. Работает двойная вложенность
+
+3. Опциональный параметр реализуется через `_func=None` и проверку `if _func is None`.
+
+
+
 ## Список используемой информации
 1. [Декораторы в Python: понять и полюбить](https://tproger.ru/translations/demystifying-decorators-in-python)
 2. [Декораторы Python: пошаговое руководство](https://habr.com/ru/companies/otus/articles/727590/)
