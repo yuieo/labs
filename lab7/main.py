@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import simpledialog, messagebox
-from geometry_package.shapes import Rectangle, Triangle, Trapezoid
+from shapes import Rectangle, Triangle, Trapezoid
 from docx import Document
 
 
@@ -38,8 +38,8 @@ class SimpleGeometryCalculator:
                 shape = Trapezoid(a, b, c, d)
 
             result_text = f"{shape}\nПлощадь: {shape.area():.2f}\n"
-            result_text += f"Радиус описанной окружности: {shape.circumradius():.2f}\n"
-            result_text += f"Радиус вписанной окружности: {shape.inradius():.2f}"
+            result_text += f"Радиус описанной окружности: {shape.circumradius()}\n"
+            result_text += f"Радиус вписанной окружности: {shape.inradius()}"
 
             self.result.config(text=result_text)
             self.last_result = result_text
