@@ -20,7 +20,6 @@ class Task:
         self._description = description.strip()
         self._priority = priority
         self._due_date = due_date
-        self._created_at = datetime.now()
         self._completed = False
 
     @property
@@ -134,7 +133,6 @@ class ToDoApp:
             due_date = None
             if self.due_date_picker.value.strip():
                 try:
-                    # Изменено: используем strptime с правильным форматом
                     due_date = datetime.strptime(
                         self.due_date_picker.value.strip(),
                         "%d-%m-%Y %H:%M"
