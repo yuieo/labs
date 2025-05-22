@@ -8,7 +8,7 @@ def simple_random_generator(seed=None, a=1664525, c=1013904223, m=2 ** 32):
     current = seed
     while True:
         current = (a * current + c) % m
-        yield current
+        yield current # функция приостанавливается здесь и возвращает current
 
 
 def count_divisors(num):
@@ -32,7 +32,7 @@ def filtered_random_generator(min_val, max_val, max_divisors, count=10):
     """Генератор случайных чисел в диапазоне [min_val, max_val],
     отфильтрованных по максимальному количеству делителей"""
     rng = simple_random_generator()
-    numbers_in_range = map(lambda x: min_val + x % (max_val - min_val + 1), rng)
+    numbers_in_range = map(lambda x: min_val + x % (max_val - min_val + 1), rng) # Преобразует числа из ЛКГ в диапазон (x = 1015568748 → 1 + 1015568748 % 100 → 1 + 48 = 49)
     filtered_numbers = filter(lambda x: count_divisors(x) <= max_divisors, numbers_in_range)
     result = []
     for num in filtered_numbers:
