@@ -1,14 +1,32 @@
-def repeat(_func=None, *, times=1):
-    def decorator(func):
-        def wrapper(*args, **kwargs):
-            return [func(*args, **kwargs) for _ in range(times)]
+from functools import wraps
+from typing import Callable, Any, Optional
+
+
+def repeat(times: Optional[int] = 1):
+    def decorator(func: Callable) -> Callable:
+        @wraps(func)
+        def wrapper(*args, **kwargs) -> list[Any]:
+            results = []
+            for _ in range(times):
+                results.append(func(*args, **kwargs))
+            return results
+
         return wrapper
-    return decorator if _func is None else decorator(_func)
+
+    return decorator
 
 
+@repeat(times=3)
+def add(a: int, b: int) -> int:
+    return a + b
 
-@repeat(times=6)
-def hello(name):
-    return f"Привет, {name}"
 
-print(hello(""))
+print(add(2, 3))
+
+
+@repeat()
+def greet(name: str) -> str:
+    return f"Привет, {name}!"
+
+
+print(greet("Юсиф"))
