@@ -1,0 +1,107 @@
+import pandas as pd
+import numpy as np
+from matplotlib import pyplot as plt
+import seaborn as sns
+from scipy import stats
+import math
+
+# Загрузка данных
+data = pd.read_csv('data.txt', sep='\t')
+n = len(data)
+data.info()  # Выведем информацию о строках таблицы
+
+# Преобразуем название месяца в числа
+dict = {'январь': '01', 'февраль': '02', 'март': '03', 'апрель': '04', 'май': '05', 'июнь': '06',
+        'июль': '07', 'август': '08', 'сентябрь': '09', 'октябрь': '10', 'ноябрь': '11', 'декабрь': '12'}
+data['Месяц'] = data['Месяц'].replace(dict)
+data['Дата'] = pd.to_datetime(data['Год'].astype(str) + data['Месяц'].astype(str) + '01', format='%Y%m%d')
+
+# Первоначальный статистический анализ
+print(data[['Апельсины', 'Яблоки']].describe())  # Выведем статистические данные по ценам на апельсины и яблоки
+data.info()  # Выведем информацию о строках новой таблицы
+print(data.head())  # Выведем первые 5 строк новой таблицы
+
+# Построение диаграммы размаха
+fig, axes = plt.subplots(1, 2)
+axes[0].set_title('Диаграмма цен на апельсины')
+axes[1].set_title('Диаграмма цен на яблоки')
+sns.boxplot(ax=axes[0], data=data, x='Апельсины', color='orange')
+sns.boxplot(ax=axes[1], data=data, x='Яблоки', color='green')
+plt.show()
+
+# Построение графика цены в зависимости от времени
+sns.lineplot(data=data, x='Дата', y='Апельсины', color='orange', label='Апельсины')
+sns.lineplot(data=data, x='Дата', y='Яблоки', color='green', label='Яблоки')
+plt.ylabel('Цена, руб./кг')
+plt.title('Динамика цен на апельсины и яблоки')
+plt.legend()
+plt.show()
+
+# Построение графика плотности распределения цен по годам
+pivot_table = data.groupby('Год').agg({'Апельсины': 'mean', 'Яблоки': 'mean'})
+print(pivot_table)
+sns.barplot(data=pivot_table, x=pivot_table.index, y='Апельсины', color='orange', alpha=0.5, label='Апельсины')
+sns.barplot(data=pivot_table, x=pivot_table.index, y='Яблоки', color='green', alpha=0.5, label='Яблоки')
+plt.ylabel('Цена, руб./кг')
+plt.title('Гистограмма цен на апельсины и яблоки')
+plt.show()
+
+# Вычисление коэффициента корреляции и проверка нулевой гипотезы о равенстве нулю генерального коэффициента корреляции
+alpha = 0.03  # уровень значимости для варианта 3
+t_cr = stats.t.ppf(1 - alpha/2, n - 2)  # Критическое значение для распределения Стьюдента при alpha=0.03
+r_p, p = stats.pearsonr(data['Апельсины'], data['Яблоки'])
+print(f'Для цен на апельсины и яблоки при выборке в {n} элементов коэффициент корреляции равен {r_p:.4f}, а уровень значимости ему соответствующий равен {p:.4f}')
+
+# Проверка правильности вычисления коэффициента корреляции, определение доверительного интервала
+coef_cor = data['Апельсины'].corr(data['Яблоки'])
+print(f'Коэффициент корреляции стоимости 1 кг апельсинов и яблок = {coef_cor:.4f}')
+t = coef_cor * math.sqrt(n - 2) / math.sqrt(1 - pow(coef_cor, 2))  # Это t_n из формулы (8)
+print(f'Наблюдаемое значение критерия = {t:.4f}, для уровня значимости {alpha} критическое значение составляет {t_cr:.4f}')
+tel = stats.t(df=n - 2)  # Статистика Стьюдента при n элементов
+p = 1 - (tel.cdf(t) - tel.cdf(-t))  # определение уровня значимости ей соответствующего
+print(f'Значение функции распределения Стьюдента при выборке в {n-2} элементов составляет {p:.4f}')
+print(f'Доверительный интервал для генерального коэффициента корреляции с уровнем значимости {alpha} имеет вид ({(r_p - t_cr*(1 - pow(r_p, 2))/math.sqrt(n)):.4f}, {(r_p + t_cr*(1 - pow(r_p, 2))/math.sqrt(n)):.4f})')
+
+# Построение выборочной функции распределения
+sns.histplot(x='Апельсины', data=data, bins=len(data), stat="density",
+             element="step", fill=False, cumulative=True, common_norm=False, label='Апельсины')
+sns.histplot(x='Яблоки', data=data, bins=len(data), stat="density",
+             element="step", fill=False, cumulative=True, common_norm=False, label='Яблоки')
+plt.title("Функция распределения")
+plt.legend()
+plt.xlabel('Цена, руб./кг')
+plt.ylabel('')
+plt.show()
+
+# Проверка гипотезы о совпадении двух функций распределения
+x1 = (data['Апельсины'] - data['Апельсины'].mean()) / data['Апельсины'].std(ddof=0)
+x2 = (data['Яблоки'] - data['Яблоки'].mean()) / data['Яблоки'].std(ddof=0)
+stat, p = stats.kstest(x1, 'norm')
+D_n = math.sqrt(len(x1)) * stat  # статистика Колмогорова формула (6)
+print(f"Статистика Колмогорова для апельсинов={stat:.4f}, D_n={D_n:.4f}, p-value={p:.4f}")
+stat, p = stats.kstest(x2, 'norm')
+D_n = math.sqrt(len(x2)) * stat  # статистика Колмогорова формула (6)
+print(f"Статистика Колмогорова для яблок={stat:.4f}, D_n={D_n:.4f}, p-value={p:.4f}")
+
+# Критерий согласия Пирсона
+df_bins_oranges = pd.DataFrame()
+bins_oranges = pd.cut(data['Апельсины'], bins=6, retbins=True)[1]  # Разбиение всего диапазона цен на 6 одинаковых по длине участков
+df_bins_oranges['Апельсины_группа'] = pd.cut(data['Апельсины'], bins=bins_oranges).value_counts()  # Вычисление количества приращений на каждом сегменте
+df_bins_oranges.sort_index(inplace=True)
+df_bins_oranges['row_num'] = np.arange(len(df_bins_oranges))
+df_bins_oranges.set_index('row_num', inplace=True)
+
+df_bins_apples = pd.DataFrame()
+bins_apples = pd.cut(data['Яблоки'], bins=6, retbins=True)[1]  # Разбиение всего диапазона цен на 6 одинаковых по длине участков
+df_bins_apples['Яблоки_группа'] = pd.cut(data['Яблоки'], bins=bins_apples).value_counts()  # Вычисление количества приращений на каждом сегменте
+df_bins_apples.sort_index(inplace=True)
+df_bins_apples['row_num'] = np.arange(len(df_bins_oranges))
+df_bins_apples.set_index('row_num', inplace=True)
+
+# Вычисление статистики Пирсона и уровня значимости ей соответствующего с помощью библиотеки stats
+stat_xi, p_value_xi = stats.chisquare(df_bins_oranges['Апельсины_группа'], df_bins_apples['Яблоки_группа'])
+print(f"Chi-squared Test: statistic={stat_xi:.4f}, p-value={p_value_xi:.4f}")
+
+# Вычисление статистики Пирсона и уровня значимости ей соответствующего вручную
+xi_2 = sum(pow(df_bins_oranges['Апельсины_группа'] - df_bins_apples['Яблоки_группа'], 2) / df_bins_apples['Яблоки_группа'])
+print(f'Статистика Пирсона на данных выборках={xi_2:.4f}, вероятность выполнения гипотезы H_0={1 - stats.chi2.cdf(xi_2, df=len(df_bins_oranges["Апельсины_группа"]) - 1):.4f}')
