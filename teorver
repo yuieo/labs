@@ -5,103 +5,195 @@ import seaborn as sns
 from scipy import stats
 import math
 
-# Загрузка данных
+plt.rcParams['font.family'] = 'DejaVu Sans'
+plt.rcParams['axes.unicode_minus'] = False
+
+# ЗАГРУЗКА ДАННЫХ
 data = pd.read_csv('data.txt', sep='\t')
 n = len(data)
-data.info()  # Выведем информацию о строках таблицы
 
-# Преобразуем название месяца в числа
-dict = {'январь': '01', 'февраль': '02', 'март': '03', 'апрель': '04', 'май': '05', 'июнь': '06',
-        'июль': '07', 'август': '08', 'сентябрь': '09', 'октябрь': '10', 'ноябрь': '11', 'декабрь': '12'}
-data['Месяц'] = data['Месяц'].replace(dict)
-data['Дата'] = pd.to_datetime(data['Год'].astype(str) + data['Месяц'].astype(str) + '01', format='%Y%m%d')
+month_dict = {
+    'январь': '01', 'февраль': '02', 'март': '03', 'апрель': '04',
+    'май': '05', 'июнь': '06', 'июль': '07', 'август': '08',
+    'сентябрь': '09', 'октябрь': '10', 'ноябрь': '11', 'декабрь': '12'
+}
 
-# Первоначальный статистический анализ
-print(data[['Апельсины', 'Яблоки']].describe())  # Выведем статистические данные по ценам на апельсины и яблоки
-data.info()  # Выведем информацию о строках новой таблицы
-print(data.head())  # Выведем первые 5 строк новой таблицы
+data['Месяц_num'] = data['Месяц'].replace(month_dict)
+data['Дата'] = pd.to_datetime(data['Год'].astype(str) + data['Месяц_num'].astype(str) + '01', format='%Y%m%d')
 
-# Построение диаграммы размаха
-fig, axes = plt.subplots(1, 2)
-axes[0].set_title('Диаграмма цен на апельсины')
-axes[1].set_title('Диаграмма цен на яблоки')
-sns.boxplot(ax=axes[0], data=data, x='Апельсины', color='orange')
-sns.boxplot(ax=axes[1], data=data, x='Яблоки', color='green')
+alpha = 0.03
+
+print("="*100)
+print("СТАТИСТИЧЕСКИЙ АНАЛИЗ ЦЕН НА АПЕЛЬСИНЫ И ЯБЛОКИ")
+print(f"Уровень значимости α = {alpha}")
+print("="*100)
+
+# ПУНКТ 1 - ПЕРВОНАЧАЛЬНЫЙ АНАЛИЗ
+print("\nПУНКТ 1. ПЕРВОНАЧАЛЬНЫЙ АНАЛИЗ")
+print(data[['Апельсины', 'Яблоки']].describe())
+
+fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+sns.boxplot(ax=axes[0], data=data, y='Апельсины', color='orange')
+sns.boxplot(ax=axes[1], data=data, y='Яблоки', color='green')
+axes[0].set_title('Диаграмма размаха: Апельсины')
+axes[1].set_title('Диаграмма размаха: Яблоки')
+plt.tight_layout()
+plt.savefig('punkt1_boxplot.png', dpi=150)
 plt.show()
 
-# Построение графика цены в зависимости от времени
-sns.lineplot(data=data, x='Дата', y='Апельсины', color='orange', label='Апельсины')
-sns.lineplot(data=data, x='Дата', y='Яблоки', color='green', label='Яблоки')
-plt.ylabel('Цена, руб./кг')
-plt.title('Динамика цен на апельсины и яблоки')
-plt.legend()
+# ПУНКТ 2 - ГРАФИК ПЛОТНОСТИ
+print("\nПУНКТ 2. ГРАФИК ПЛОТНОСТИ РАСПРЕДЕЛЕНИЯ")
+
+fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+axes[0].hist(data['Апельсины'], bins=12, density=True, alpha=0.7, color='orange', edgecolor='black')
+axes[0].set_title('Плотность распределения: Апельсины')
+axes[0].set_xlabel('Цена, руб/кг')
+axes[0].set_ylabel('Плотность')
+axes[1].hist(data['Яблоки'], bins=12, density=True, alpha=0.7, color='green', edgecolor='black')
+axes[1].set_title('Плотность распределения: Яблоки')
+axes[1].set_xlabel('Цена, руб/кг')
+plt.tight_layout()
+plt.savefig('punkt2_density.png', dpi=150)
 plt.show()
 
-# Построение графика плотности распределения цен по годам
-pivot_table = data.groupby('Год').agg({'Апельсины': 'mean', 'Яблоки': 'mean'})
-print(pivot_table)
-sns.barplot(data=pivot_table, x=pivot_table.index, y='Апельсины', color='orange', alpha=0.5, label='Апельсины')
-sns.barplot(data=pivot_table, x=pivot_table.index, y='Яблоки', color='green', alpha=0.5, label='Яблоки')
-plt.ylabel('Цена, руб./кг')
-plt.title('Гистограмма цен на апельсины и яблоки')
+print(f"Асимметрия: Апельсины = {data['Апельсины'].skew():.4f}, Яблоки = {data['Яблоки'].skew():.4f}")
+print(f"Эксцесс: Апельсины = {data['Апельсины'].kurtosis():.4f}, Яблоки = {data['Яблоки'].kurtosis():.4f}")
+
+# ПУНКТ 3 - КОЭФФИЦИЕНТ КОРРЕЛЯЦИИ
+print("\nПУНКТ 3. КОЭФФИЦИЕНТ КОРРЕЛЯЦИИ")
+
+r_p, p_value = stats.pearsonr(data['Апельсины'], data['Яблоки'])
+print(f"Коэффициент корреляции Пирсона: r = {r_p:.4f}")
+print(f"P-value: {p_value:.6f}")
+
+fig, ax = plt.subplots(figsize=(9, 6))
+ax.scatter(data['Апельсины'], data['Яблоки'], alpha=0.6, s=60, color='royalblue')
+z = np.polyfit(data['Апельсины'], data['Яблоки'], 1)
+p_fit = np.poly1d(z)
+x_line = np.linspace(data['Апельсины'].min(), data['Апельсины'].max(), 100)
+ax.plot(x_line, p_fit(x_line), "r--", linewidth=2.5, label=f'y = {z[0]:.2f}x + {z[1]:.2f}')
+ax.set_xlabel('Цена апельсинов, руб/кг')
+ax.set_ylabel('Цена яблок, руб/кг')
+ax.set_title(f'Корреляция цен (r = {r_p:.4f})')
+ax.legend()
+ax.grid(alpha=0.3)
+plt.tight_layout()
+plt.savefig('punkt3_correlation.png', dpi=150)
 plt.show()
 
-# Вычисление коэффициента корреляции и проверка нулевой гипотезы о равенстве нулю генерального коэффициента корреляции
-alpha = 0.03  # уровень значимости для варианта 3
-t_cr = stats.t.ppf(1 - alpha/2, n - 2)  # Критическое значение для распределения Стьюдента при alpha=0.03
-r_p, p = stats.pearsonr(data['Апельсины'], data['Яблоки'])
-print(f'Для цен на апельсины и яблоки при выборке в {n} элементов коэффициент корреляции равен {r_p:.4f}, а уровень значимости ему соответствующий равен {p:.4f}')
+# ПУНКТ 4 - ДОВЕРИТЕЛЬНЫЙ ИНТЕРВАЛ
+print("\nПУНКТ 4. ДОВЕРИТЕЛЬНЫЙ ИНТЕРВАЛ")
 
-# Проверка правильности вычисления коэффициента корреляции, определение доверительного интервала
-coef_cor = data['Апельсины'].corr(data['Яблоки'])
-print(f'Коэффициент корреляции стоимости 1 кг апельсинов и яблок = {coef_cor:.4f}')
-t = coef_cor * math.sqrt(n - 2) / math.sqrt(1 - pow(coef_cor, 2))  # Это t_n из формулы (8)
-print(f'Наблюдаемое значение критерия = {t:.4f}, для уровня значимости {alpha} критическое значение составляет {t_cr:.4f}')
-tel = stats.t(df=n - 2)  # Статистика Стьюдента при n элементов
-p = 1 - (tel.cdf(t) - tel.cdf(-t))  # определение уровня значимости ей соответствующего
-print(f'Значение функции распределения Стьюдента при выборке в {n-2} элементов составляет {p:.4f}')
-print(f'Доверительный интервал для генерального коэффициента корреляции с уровнем значимости {alpha} имеет вид ({(r_p - t_cr*(1 - pow(r_p, 2))/math.sqrt(n)):.4f}, {(r_p + t_cr*(1 - pow(r_p, 2))/math.sqrt(n)):.4f})')
+t_cr = stats.t.ppf(1 - alpha/2, n - 2)
+t_obs = r_p * math.sqrt(n - 2) / math.sqrt(1 - r_p**2)
 
-# Построение выборочной функции распределения
-sns.histplot(x='Апельсины', data=data, bins=len(data), stat="density",
-             element="step", fill=False, cumulative=True, common_norm=False, label='Апельсины')
-sns.histplot(x='Яблоки', data=data, bins=len(data), stat="density",
-             element="step", fill=False, cumulative=True, common_norm=False, label='Яблоки')
-plt.title("Функция распределения")
-plt.legend()
-plt.xlabel('Цена, руб./кг')
-plt.ylabel('')
+se = (1 - r_p**2) / math.sqrt(n)
+ci_lower = r_p - t_cr * se
+ci_upper = r_p + t_cr * se
+
+print(f"t_critical = {t_cr:.4f}, t_obs = {t_obs:.4f}")
+print(f"Доверительный интервал для ρ при α = {alpha}: ({ci_lower:.4f}, {ci_upper:.4f})")
+
+# ПУНКТ 5 - ПРОВЕРКА ГИПОТЕЗЫ H0: ρ = 0
+print("\nПУНКТ 5. ПРОВЕРКА ГИПОТЕЗЫ H0: ρ = 0")
+
+tel = stats.t(df=n - 2)
+p_value_test = 2 * (1 - tel.cdf(abs(t_obs)))
+
+print(f"|t_obs| = {abs(t_obs):.4f}, t_crit = {t_cr:.4f}")
+print(f"P-value = {p_value_test:.6f}")
+
+if abs(t_obs) > t_cr:
+    print("→ ОТВЕРГАЕМ H0: корреляция статистически значима")
+else:
+    print("→ НЕ ОТВЕРГАЕМ H0")
+
+# ПУНКТ 6 - ВЫБОРОЧНАЯ ФУНКЦИЯ РАСПРЕДЕЛЕНИЯ
+print("\nПУНКТ 6. ВЫБОРОЧНАЯ ФУНКЦИЯ РАСПРЕДЕЛЕНИЯ")
+
+fig, ax = plt.subplots(figsize=(10, 6))
+oranges_sorted = np.sort(data['Апельсины'])
+apples_sorted = np.sort(data['Яблоки'])
+ecdf_oranges = np.arange(1, n+1) / n
+ecdf_apples = np.arange(1, n+1) / n
+
+ax.step(oranges_sorted, ecdf_oranges, where='post', label='Апельсины', color='orange', linewidth=2.5)
+ax.step(apples_sorted, ecdf_apples, where='post', label='Яблоки', color='green', linewidth=2.5)
+ax.set_xlabel('Цена, руб/кг')
+ax.set_ylabel('F(x)')
+ax.set_title('Выборочная функция распределения')
+ax.legend()
+ax.grid(alpha=0.3)
+plt.tight_layout()
+plt.savefig('punkt6_ecdf.png', dpi=150)
 plt.show()
 
-# Проверка гипотезы о совпадении двух функций распределения
-x1 = (data['Апельсины'] - data['Апельсины'].mean()) / data['Апельсины'].std(ddof=0)
-x2 = (data['Яблоки'] - data['Яблоки'].mean()) / data['Яблоки'].std(ddof=0)
-stat, p = stats.kstest(x1, 'norm')
-D_n = math.sqrt(len(x1)) * stat  # статистика Колмогорова формула (6)
-print(f"Статистика Колмогорова для апельсинов={stat:.4f}, D_n={D_n:.4f}, p-value={p:.4f}")
-stat, p = stats.kstest(x2, 'norm')
-D_n = math.sqrt(len(x2)) * stat  # статистика Колмогорова формула (6)
-print(f"Статистика Колмогорова для яблок={stat:.4f}, D_n={D_n:.4f}, p-value={p:.4f}")
+print(f"Медиана: Апельсины = {data['Апельсины'].median():.2f}, Яблоки = {data['Яблоки'].median():.2f}")
 
-# Критерий согласия Пирсона
-df_bins_oranges = pd.DataFrame()
-bins_oranges = pd.cut(data['Апельсины'], bins=6, retbins=True)[1]  # Разбиение всего диапазона цен на 6 одинаковых по длине участков
-df_bins_oranges['Апельсины_группа'] = pd.cut(data['Апельсины'], bins=bins_oranges).value_counts()  # Вычисление количества приращений на каждом сегменте
-df_bins_oranges.sort_index(inplace=True)
-df_bins_oranges['row_num'] = np.arange(len(df_bins_oranges))
-df_bins_oranges.set_index('row_num', inplace=True)
+# ПУНКТ 7 - КРИТЕРИЙ КОЛМОГОРОВА-СМИРНОВА
+print("\nПУНКТ 7. ПРОВЕРКА СОВПАДЕНИЯ РАСПРЕДЕЛЕНИЙ (КРИТЕРИЙ КС)")
 
-df_bins_apples = pd.DataFrame()
-bins_apples = pd.cut(data['Яблоки'], bins=6, retbins=True)[1]  # Разбиение всего диапазона цен на 6 одинаковых по длине участков
-df_bins_apples['Яблоки_группа'] = pd.cut(data['Яблоки'], bins=bins_apples).value_counts()  # Вычисление количества приращений на каждом сегменте
-df_bins_apples.sort_index(inplace=True)
-df_bins_apples['row_num'] = np.arange(len(df_bins_oranges))
-df_bins_apples.set_index('row_num', inplace=True)
+stat_ks, p_ks = stats.ks_2samp(data['Апельсины'], data['Яблоки'])
+print(f"Статистика KS: D = {stat_ks:.4f}, P-value = {p_ks:.6f}")
 
-# Вычисление статистики Пирсона и уровня значимости ей соответствующего с помощью библиотеки stats
-stat_xi, p_value_xi = stats.chisquare(df_bins_oranges['Апельсины_группа'], df_bins_apples['Яблоки_группа'])
-print(f"Chi-squared Test: statistic={stat_xi:.4f}, p-value={p_value_xi:.4f}")
+if p_ks < alpha:
+    print(f"→ ОТВЕРГАЕМ H0 при α = {alpha}: распределения различаются")
+else:
+    print(f"→ НЕ ОТВЕРГАЕМ H0: распределения существенно не различаются")
 
-# Вычисление статистики Пирсона и уровня значимости ей соответствующего вручную
-xi_2 = sum(pow(df_bins_oranges['Апельсины_группа'] - df_bins_apples['Яблоки_группа'], 2) / df_bins_apples['Яблоки_группа'])
-print(f'Статистика Пирсона на данных выборках={xi_2:.4f}, вероятность выполнения гипотезы H_0={1 - stats.chi2.cdf(xi_2, df=len(df_bins_oranges["Апельсины_группа"]) - 1):.4f}')
+# ПУНКТ 8 - ПРОВЕРКА НА ИНТЕРВАЛАХ (КРИТЕРИЙ ХИ-КВАДРАТ)
+print("\nПУНКТ 8. ПРОВЕРКА НА СПЕЦИАЛЬНО ВЫДЕЛЕННЫХ ИНТЕРВАЛАХ")
+
+k_bins = 6
+min_price = min(data['Апельсины'].min(), data['Яблоки'].min())
+max_price = max(data['Апельсины'].max(), data['Яблоки'].max())
+bins_common = np.linspace(min_price, max_price, k_bins + 1)
+
+oranges_binned = pd.cut(data['Апельсины'], bins=bins_common, include_lowest=True)
+apples_binned = pd.cut(data['Яблоки'], bins=bins_common, include_lowest=True)
+
+freq_oranges = oranges_binned.value_counts().sort_index()
+freq_apples = apples_binned.value_counts().sort_index()
+
+observed = np.array([freq_oranges.values, freq_apples.values])
+chi2_stat, p_chi2, dof, expected = stats.chi2_contingency(observed)
+
+print(f"Статистика χ² = {chi2_stat:.4f}, df = {dof}, P-value = {p_chi2:.6f}")
+
+if p_chi2 < alpha:
+    print(f"→ ОТВЕРГАЕМ H0 при α = {alpha}: частоты различаются")
+else:
+    print(f"→ НЕ ОТВЕРГАЕМ H0: частоты существенно не различаются")
+
+fig, ax = plt.subplots(figsize=(12, 6))
+x_pos = np.arange(k_bins)
+ax.bar(x_pos - 0.2, freq_oranges.values, 0.4, label='Апельсины', color='orange', alpha=0.8)
+ax.bar(x_pos + 0.2, freq_apples.values, 0.4, label='Яблоки', color='green', alpha=0.8)
+ax.set_title(f'Распределение частот по интервалам (χ² = {chi2_stat:.2f})')
+ax.set_xlabel('Номер интервала')
+ax.set_ylabel('Частота')
+ax.legend()
+plt.tight_layout()
+plt.savefig('punkt8_intervals.png', dpi=150)
+plt.show()
+
+# ПУНКТ 9 - ДОПОЛНИТЕЛЬНЫЕ ГРАФИКИ
+print("\nПУНКТ 9. ПОДГОТОВКА ОТЧЕТА")
+
+# График динамики
+fig, ax = plt.subplots(figsize=(12, 6))
+ax.plot(data['Дата'], data['Апельсины'], 'o-', color='orange', linewidth=2, label='Апельсины')
+ax.plot(data['Дата'], data['Яблоки'], 's-', color='green', linewidth=2, label='Яблоки')
+ax.set_title('Динамика цен (2018-2022)')
+ax.set_xlabel('Дата')
+ax.set_ylabel('Цена, руб/кг')
+ax.legend()
+ax.grid(alpha=0.3)
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.savefig('punkt9_dynamics.png', dpi=150)
+plt.show()
+
+print("\n" + "="*100)
+print("РАБОТА ВЫПОЛНЕНА! ВСЕ ГРАФИКИ СОХРАНЕНЫ!")
+print("="*100)
